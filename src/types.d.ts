@@ -3,5 +3,5 @@ interface ISocketClient<S> {
     close: () => void;
     publish: Function;
     subscribe: Function;
-    unsubscribe: (subscriptionID: string) => void;
+    unsubscribe: (subscriptionID: Symbol) => void;
 }

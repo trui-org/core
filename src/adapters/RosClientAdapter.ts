@@ -8,36 +8,36 @@ type SubscriptionValueType = {
 }
 
 export class RosClient extends GenericSocketClientAdapter<SocketType, SubscriptionValueType> {
-    private ros: Ros;
+    private _ros: Ros;
 
     public constructor() {
         super();
 
         // create an unconnected Ros object
-        this.ros = new Ros({ url: undefined });
+        this._ros = new Ros({ url: undefined });
     }
 
     public connect = (url: string): Promise<Ros> => {
         return new Promise((resolve, reject) => {
-            this.ros.connect(url);
+            this._ros.connect(url);
 
-            this.ros.on('connection', () => {
-                resolve(this.ros);
+            this._ros.on('connection', () => {
+                resolve(this._ros);
             });
 
-            this.ros.on('error', (error: any) => {
+            this._ros.on('error', (error: any) => {
                 reject(error);
             });
         })
     }
 
     public close = () => {
-        this.ros.close();
+        this._ros.close();
     }
 
     public publish = (eventName: string, data: Message, messageType: string) => {
         const topic = new Topic({
-            ros: this.ros,
+            ros: this._ros,
             name: eventName,
             messageType
         });
@@ -45,9 +45,9 @@ export class RosClient extends GenericSocketClientAdapter<SocketType, Subscripti
         topic.publish(data);
     }
 
-    public subscribe = (eventName: string, messageType: string, callback: SubscribeCallbackType<Message>): string => {
+    public subscribe = (eventName: string, messageType: string, callback: SubscribeCallbackType<Message>): Symbol => {
         const topic = new Topic({
-            ros: this.ros,
+            ros: this._ros,
             name: eventName,
             messageType
         });
@@ -60,7 +60,7 @@ export class RosClient extends GenericSocketClientAdapter<SocketType, Subscripti
         return subscriptionID;
     }
 
-    public unsubscribe = (subscriptionID: string) => {
+    public unsubscribe = (subscriptionID: Symbol) => {
         const value = this.getSubcriptionValue(subscriptionID);
 
         if (value !== undefined) {
