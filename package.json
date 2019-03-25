@@ -2,23 +2,50 @@
   "name": "core",
   "version": "0.1.0",
   "description": "The core of the trui framework",
-  "main": "index.js",
+  "keywords": [
+    "titan rover",
+    "ui",
+    "real-time",
+    "user interface"
+  ],
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "browser": "dist/umd/index.min.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "sideEffects": false,
   "repository": "https://github.com/trui-org/core.git",
   "author": "Weffe <rogelio_negrete@live.com>",
-  "license": "MIT",
-  "sideEffects": false,
+  "homepage": "https://github.com/trui-org/core",
+  "bugs": "https://github.com/trui-org/core/issues",
   "devDependencies": {
     "@types/roslib": "^0.18.3",
     "@types/shortid": "^0.0.29",
     "@types/socket.io-client": "^1.4.32",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.7.2",
+    "rollup-plugin-auto-external": "^2.0.0",
+    "rollup-plugin-commonjs": "^9.2.1",
+    "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-terser": "^4.0.4",
     "rollup-plugin-typescript2": "^0.20.1",
-    "typescript": "^3.3.4000"
-  },
-  "scripts": {
-    "build": "rollup"
-  },
-  "dependencies": {
+    "typescript": "^3.3.4000",
     "roslib": "^1.0.1",
     "socket.io-client": "^2.2.0"
-  }
+  },
+  "peerDependencies": {
+    "roslib": "^1.0.1",
+    "socket.io-client": "^2.2.0"
+  },
+  "scripts": {
+    "start": "rollup -c -w",
+    "prebuild": "rimraf dist",
+    "build": "rollup -c",
+    "clean": "rimraf dist"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ]
 }
