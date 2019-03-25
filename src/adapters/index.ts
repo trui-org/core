@@ -1,2 +1,2 @@
 export { RosClient } from './RosClientAdapter';
-export { SocketIOClient } from './SocketIOClientAdapter';
+// export { SocketIOClient } from './SocketIOClientAdapter';
