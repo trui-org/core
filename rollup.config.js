@@ -9,8 +9,8 @@ import pkg from './package.json';
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
 
-const umdBaseConfig =  // browser-friendly UMD build
-{
+// browser-friendly UMD build
+const umdBaseConfig = {
     input: 'src/index.ts',
     output: {
         name: 'trui',
@@ -36,7 +36,7 @@ const umdConfigMinifed = {
         ...umdBaseConfig.plugins,
         production && terser() // minify transpiled code 
     ]
-}
+};
 
 const config = [
     // generate an unminified version of the umd build
@@ -47,7 +47,7 @@ const config = [
             file: pkg.browser.replace('.min', ''),
         },
     },
-    // generate a minified umd version if we are buidling for production
+    // generate a minified umd version if we are building for production
     production && umdConfigMinifed,
 
     // CommonJS (for Node) and ES module (for bundlers) build.
@@ -68,6 +68,6 @@ const config = [
             { file: pkg.module, format: 'es' }
         ]
     }
-]
+];
 
 export default config;
