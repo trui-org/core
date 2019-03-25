@@ -8,7 +8,7 @@ type SubscriptionValueType = {
 }
 
 export class RosClient extends GenericSocketClientAdapter<SocketType, SubscriptionValueType> {
-    public ros: Ros;
+    private ros: Ros;
 
     public constructor() {
         super();
