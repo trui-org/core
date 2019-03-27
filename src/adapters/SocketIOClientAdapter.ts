@@ -1,73 +1,60 @@
-import * as sio from 'socket.io-client';
+import socketIO from 'socket.io-client';
 import { GenericSocketClientAdapter, SubscribeCallbackType } from './shared/GenericSocketClientAdapter';
 
-type SocketType = SocketIOClientStatic;
 type SubscriptionValueType = {
-    callback: (message: any) => void
+    emitter: SocketIOClient.Emitter,
+    eventName: string;
+    callback: Function
 }
 
-export class SocketIOClient extends GenericSocketClientAdapter<SocketType, SubscriptionValueType> {
-    public client: any;
+export class SocketIOClient extends GenericSocketClientAdapter<SubscriptionValueType> {
+    private _client: SocketIOClient.Socket | null;
+    private _socketIOConnectOpts: SocketIOClient.ConnectOpts | undefined;
 
-    public constructor(options?: object) {
+    public constructor(options?: SocketIOClient.ConnectOpts) {
         super();
 
-        // create an unconnected SocketIO Client
-        this.client = socketIO({
-            autoConnect: false,
-            ...options
-        });
+        this._client = null;
+        this._socketIOConnectOpts = options || undefined;
     }
 
-    public connect = (url: string): Promise<Ros> => {
+    public connect = (url: string): Promise<void> => {
         return new Promise((resolve, reject) => {
-            this.client.
+            this._client = socketIO(url, this._socketIOConnectOpts);
 
-                this.ros.on('connection', () => {
-                    resolve(this.ros);
-                });
+            this._client.on('connect', () => {
+                resolve();
+            });
 
-            this.ros.on('error', (error: any) => {
+            this._client.on('connect_error', (error: any) => {
                 reject(error);
             });
         })
     }
 
     public close = () => {
-        this.client.close();
+        this._client!.close();
     }
 
-    public publish = (eventName: string, data: Message, messageType: string) => {
-        const topic = new Topic({
-            ros: this.ros,
-            name: eventName,
-            messageType
-        });
-
-        topic.publish(data);
+    public publish = (eventName: string, data: any) => {
+        this._client!.emit(eventName, data);
     }
 
-    public subscribe = (eventName: string, messageType: string, callback: SubscribeCallbackType<Message>): string => {
-        const topic = new Topic({
-            ros: this.ros,
-            name: eventName,
-            messageType
-        });
+    public subscribe = (eventName: string, callback: SubscribeCallbackType<any>): Symbol => {
+        const emitter = this._client!.on(eventName, callback);
 
-        const subscriptionValue = { topic, callback };
+        const subscriptionValue = { emitter, eventName, callback };
         const subscriptionID = this.addSubscription(eventName, subscriptionValue);
-
-        topic.subscribe(callback);
 
         return subscriptionID;
     }
 
-    public unsubscribe = (subscriptionID: string) => {
+    public unsubscribe = (subscriptionID: Symbol) => {
         const value = this.getSubcriptionValue(subscriptionID);
 
         if (value !== undefined) {
-            const { callback } = value;
-            topic.unsubscribe(callback);
+            const { emitter, eventName, callback } = value;
+            emitter.off(eventName, callback);
 
             this.removeSubscription(subscriptionID);
         }
