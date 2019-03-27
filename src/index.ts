@@ -1,3 +1,2 @@
-import * as adapters from './adapters/index';
-
-export const Adapters = adapters;
+export * from './adapters';
+export * from './types';
