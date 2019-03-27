@@ -1,13 +1,12 @@
 import { Ros, Topic, Message } from 'roslib';
 import { GenericSocketClientAdapter, SubscribeCallbackType } from './shared/GenericSocketClientAdapter';
 
-type SocketType = Ros;
 type SubscriptionValueType = {
     topic: Topic,
     callback: (message: Message) => void
 }
 
-export class RosClient extends GenericSocketClientAdapter<SocketType, SubscriptionValueType> {
+export class RosClient extends GenericSocketClientAdapter<SubscriptionValueType> {
     private _ros: Ros;
 
     public constructor() {
@@ -17,12 +16,12 @@ export class RosClient extends GenericSocketClientAdapter<SocketType, Subscripti
         this._ros = new Ros({ url: undefined });
     }
 
-    public connect = (url: string): Promise<Ros> => {
+    public connect = (url: string): Promise<void> => {
         return new Promise((resolve, reject) => {
             this._ros.connect(url);
 
             this._ros.on('connection', () => {
-                resolve(this._ros);
+                resolve();
             });
 
             this._ros.on('error', (error: any) => {

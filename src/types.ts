@@ -1,5 +1,5 @@
-interface ISocketClient<S> {
-    connect: (url: string) => Promise<S>;
+export interface ISocketClient {
+    connect: (url: string) => Promise<void>;
     close: () => void;
     publish: Function;
     subscribe: Function;

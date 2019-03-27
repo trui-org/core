@@ -1,15 +1,17 @@
+import { ISocketClient } from '~/types';
+
 export type SubscribeCallbackType<U, R = void> = (data: U) => R;
 export type GenericPublishType<D = any> = (eventName: string, data: D) => void;
 export type GenericSubscribeType<C = any> = (eventName: string, callback: SubscribeCallbackType<C>) => string;
 
-export abstract class GenericSocketClientAdapter<S = any, D = any> implements ISocketClient<S> {
+export abstract class GenericSocketClientAdapter<D = any> implements ISocketClient {
     private _subscribedEvents: Map<Symbol, D>;
 
     public constructor() {
         this._subscribedEvents = new Map();
     }
 
-    public abstract connect(url: string): Promise<S>;
+    public abstract connect(url: string): Promise<void>;
     public abstract close(): void;
     public abstract publish: Function;
     public abstract subscribe: Function;
