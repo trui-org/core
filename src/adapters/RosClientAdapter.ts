@@ -8,12 +8,14 @@ type SubscriptionValueType = {
 
 export class RosClient extends GenericSocketClientAdapter<SubscriptionValueType> {
     private _ros: Ros;
+    private _connected: boolean;
 
     public constructor() {
         super();
 
         // create an unconnected Ros object
         this._ros = new Ros({ url: undefined });
+        this._connected = false;
     }
 
     public connect = (url: string): Promise<void> => {
@@ -21,10 +23,12 @@ export class RosClient extends GenericSocketClientAdapter<SubscriptionValueType>
             this._ros.connect(url);
 
             this._ros.on('connection', () => {
+                this._connected = true;
                 resolve();
             });
 
             this._ros.on('error', (error: any) => {
+                this._connected = false;
                 reject(error);
             });
         })
@@ -32,6 +36,11 @@ export class RosClient extends GenericSocketClientAdapter<SubscriptionValueType>
 
     public close = () => {
         this._ros.close();
+        this._connected = false;
+    }
+
+    public get connected() {
+        return this._connected;
     }
 
     public publish = (eventName: string, data: Message, messageType: string) => {

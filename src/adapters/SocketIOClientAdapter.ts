@@ -36,6 +36,14 @@ export class SocketIOClient extends GenericSocketClientAdapter<SubscriptionValue
         this._client!.close();
     }
 
+    public get connected() {
+        if (this._client === null) {
+            return false;
+        }
+
+        return this._client.connected;
+    }
+
     public publish = (eventName: string, data: any) => {
         this._client!.emit(eventName, data);
     }

@@ -13,6 +13,7 @@ export abstract class GenericSocketClientAdapter<D = any> implements ISocketClie
 
     public abstract connect(url: string): Promise<void>;
     public abstract close(): void;
+    public abstract get connected(): boolean;
     public abstract publish: Function;
     public abstract subscribe: Function;
     public abstract unsubscribe(subscriptionID: Symbol): void;
